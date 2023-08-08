@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 
 @Slf4j
 public class CsvWriter implements ExcelWriter {
+    static byte[] BOM = "\ufeff".getBytes();
 
     @Override
     public String[] getSupportFormat() {
@@ -48,6 +49,7 @@ public class CsvWriter implements ExcelWriter {
 
         return Mono.defer(() -> {
             try {
+                outputStream.write(BOM);
                 CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL);
                 return dataStream
                         .doOnNext(cell -> doWrite(printer, cell))
